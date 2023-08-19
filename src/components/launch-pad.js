@@ -20,6 +20,7 @@ import { useSpaceXQuery } from "../utils/use-space-x";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
 import { LaunchItem } from "./launches";
+import { ToggleFavouriteButton } from "./favourites";
 
 export default function LaunchPad() {
   let { launchPadId } = useParams();
@@ -93,6 +94,7 @@ function Header({ launchPad }) {
         {launchPad.full_name}
       </Heading>
       <Stack isInline spacing="3">
+        <ToggleFavouriteButton id={launchPad.id} type="launchPad" />
         <Badge colorScheme="purple" fontSize={["sm", "md"]}>
           {launchPad.launch_successes}/{launchPad.launch_attempts} successful
         </Badge>

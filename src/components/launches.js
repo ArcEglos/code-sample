@@ -7,6 +7,7 @@ import { formatDate } from "../utils/format-date";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
 import LoadMoreButton from "./load-more-button";
+import { ToggleFavouriteButton } from "./favourites";
 
 const PAGE_SIZE = 12;
 
@@ -76,46 +77,50 @@ export function LaunchItem({ launch }) {
         objectFit="contain"
         objectPosition="bottom"
       />
-
-      <Box p="6">
-        <Box d="flex" alignItems="baseline">
-          {launch.success ? (
-            <Badge px="2" variant="solid" colorScheme="green">
-              Successful
-            </Badge>
-          ) : (
-            <Badge px="2" variant="solid" colorScheme="red">
-              Failed
-            </Badge>
-          )}
-          <Box
-            color="gray.500"
-            fontWeight="semibold"
-            letterSpacing="wide"
-            fontSize="xs"
-            textTransform="uppercase"
-            ml="2"
-          >
-            {launch.rocket?.name} &bull; {launch.launchpad?.name}
+      <Flex>
+        <Box p="6" minWidth="0" flexGrow="1">
+          <Box d="flex" alignItems="baseline">
+            {launch.success ? (
+              <Badge px="2" variant="solid" colorScheme="green">
+                Successful
+              </Badge>
+            ) : (
+              <Badge px="2" variant="solid" colorScheme="red">
+                Failed
+              </Badge>
+            )}
+            <Box
+              color="gray.500"
+              fontWeight="semibold"
+              letterSpacing="wide"
+              fontSize="xs"
+              textTransform="uppercase"
+              ml="2"
+            >
+              {launch.rocket?.name} &bull; {launch.launchpad?.name}
+            </Box>
           </Box>
-        </Box>
 
-        <Box
-          mt="1"
-          fontWeight="semibold"
-          as="h4"
-          lineHeight="tight"
-          isTruncated
-        >
-          {launch.name}
+          <Box
+            mt="1"
+            fontWeight="semibold"
+            as="h4"
+            lineHeight="tight"
+            isTruncated
+          >
+            {launch.name}
+          </Box>
+          <Flex whiteSpace="nowrap">
+            <Text fontSize="sm">{formatDate(launch.date_utc)} </Text>
+            <Text color="gray.500" ml="2" fontSize="sm">
+              {timeAgo(launch.date_utc)}
+            </Text>
+          </Flex>
         </Box>
-        <Flex>
-          <Text fontSize="sm">{formatDate(launch.date_utc)} </Text>
-          <Text color="gray.500" ml="2" fontSize="sm">
-            {timeAgo(launch.date_utc)}
-          </Text>
-        </Flex>
-      </Box>
+        <Box p="4" pl="0" pt="5">
+          <ToggleFavouriteButton id={launch.id} type="launch" />
+        </Box>
+      </Flex>
     </Box>
   );
 }
