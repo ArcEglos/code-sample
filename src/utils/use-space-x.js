@@ -3,7 +3,7 @@ import useSWRInfinite from "swr/infinite";
 
 const spaceXApiBase = process.env.REACT_APP_SPACEX_API_URL;
 
-export const queryFetcher = async (objectType, payload) => {
+export const queryFetcher = async ([objectType, payload]) => {
   const response = await fetch(`${spaceXApiBase}/${objectType}/query`, {
     method: "POST",
     body: JSON.stringify(payload),
@@ -19,11 +19,11 @@ export const queryFetcher = async (objectType, payload) => {
   return await response.json();
 };
 
-export function useSpaceXQuery(objectType, payload) {
-  return useSWR(objectType ? [objectType, payload] : null, queryFetcher);
+export function useSpaceXQuery(objectType, payload, options) {
+  return useSWR(objectType ? [objectType, payload] : [], queryFetcher, options);
 }
 
-export function useSpaceXPaginatedQuery(objectType, payload) {
+export function useSpaceXPaginatedQuery(objectType, payload, options) {
   return useSWRInfinite((_pageIndex, previousPageData) => {
     if (previousPageData && !previousPageData.hasNextPage) {
       return null;
@@ -37,5 +37,5 @@ export function useSpaceXPaginatedQuery(objectType, payload) {
       objectType,
       { ...payload, options: { ...payload.options, offset } },
     ];
-  }, queryFetcher);
+  }, queryFetcher, options);
 }
