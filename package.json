@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^14.1.1",
+    "@vitejs/plugin-react": "^4.0.4",
     "framer-motion": "^6.3.3",
     "jest-fetch-mock": "^3.0.3",
     "react": "^18.1.0",
@@ -17,14 +18,15 @@
     "react-feather": "^2.0.9",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.1",
     "swr": "2.2.1",
     "timeago.js": "^4.0.2",
-    "use-local-storage-state": "17"
+    "use-local-storage-state": "17",
+    "vite": "^4.4.9"
   },
   "scripts": {
-    "start": "GENERATE_SOURCEMAP=false react-scripts start",
-    "build": "react-scripts build",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "react-scripts test"
   },
   "eslintConfig": {

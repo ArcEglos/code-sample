@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 
-const spaceXApiBase = process.env.REACT_APP_SPACEX_API_URL;
+const spaceXApiBase = import.meta.env.VITE_SPACEX_API_URL;
 
 export const queryFetcher = async ([objectType, payload]) => {
   const response = await fetch(`${spaceXApiBase}/${objectType}/query`, {
