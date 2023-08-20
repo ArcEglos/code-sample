@@ -49,18 +49,22 @@ export function Favourites() {
           <DrawerCloseButton />
           <DrawerHeader>Favourites</DrawerHeader>
           <DrawerBody p={0}>
-            <Accordion defaultIndex={[0, 1]} allowMultiple>
-              <FavouriteLaunches
-                launches={favourites.filter(
-                  (candidate) => candidate.type === "launch"
-                )}
-              />
-              <FavouriteLaunchPads
-                launchPads={favourites.filter(
-                  (candidate) => candidate.type === "launchPad"
-                )}
-              />
-            </Accordion>
+            {favourites.length === 0 ? (
+              <Box p="6">No favourites saved.</Box>
+            ) : (
+              <Accordion defaultIndex={[0, 1]} allowMultiple>
+                <FavouriteLaunches
+                  launches={favourites
+                    .filter((candidate) => candidate.type === "launch")
+                    .map((launch) => launch.id)}
+                />
+                <FavouriteLaunchPads
+                  launchPads={favourites
+                    .filter((candidate) => candidate.type === "launchPad")
+                    .map((launchPad) => launchPad.id)}
+                />
+              </Accordion>
+            )}
           </DrawerBody>
         </DrawerContent>
       </Drawer>
@@ -72,7 +76,7 @@ const FavouriteLaunches = ({ launches }) => {
   const { data, error } = useSpaceXPaginatedQuery(
     "launches",
     {
-      query: { _id: { $in: launches.map((entry) => entry.id) } },
+      query: { _id: { $in: launches } },
       options: {
         populate: ["rocket", "launchpad"],
         limit: launches.length,
@@ -94,8 +98,17 @@ const FavouriteLaunches = ({ launches }) => {
           ?.map((page) => page.docs)
           .flat()
           .map((launch) => {
+            if (!launches.includes(launch.id)) {
+              return null;
+            }
+
             return (
-              <Box gap="2" as={Link} to={`/launches/${launch.id}`}>
+              <Box
+                key={launch.id}
+                gap="2"
+                as={Link}
+                to={`/launches/${launch.id}`}
+              >
                 <Flex justifyContent="space-between" alignItems="flex-end">
                   <Box isTruncated>{launch.name}</Box>
                   <ToggleFavouriteButton id={launch.id} type="launch" />
@@ -121,7 +134,7 @@ const FavouriteLaunchPads = ({ launchPads }) => {
   const { data, error } = useSpaceXPaginatedQuery(
     "launchpads",
     {
-      query: { _id: { $in: launchPads.map((entry) => entry.id) } },
+      query: { _id: { $in: launchPads } },
       options: {
         populate: ["rockets"],
         limit: launchPads.length,
@@ -142,8 +155,17 @@ const FavouriteLaunchPads = ({ launchPads }) => {
         ?.map((page) => page.docs)
         .flat()
         .map((launchPad) => {
+          if (!launchPads.includes(launchPad.id)) {
+            return null;
+          }
+
           return (
-            <Box gap="2" as={Link} to={`/launch-pads/${launchPad.id}`}>
+            <Box
+              key={launchPad.id}
+              gap="2"
+              as={Link}
+              to={`/launch-pads/${launchPad.id}`}
+            >
               <Flex justifyContent="space-between" alignItems="flex-end">
                 <Box isTruncated>{launchPad.full_name}</Box>
                 <ToggleFavouriteButton id={launchPad.id} type="launchPad" />

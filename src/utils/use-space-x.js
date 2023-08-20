@@ -24,18 +24,22 @@ export function useSpaceXQuery(objectType, payload, options) {
 }
 
 export function useSpaceXPaginatedQuery(objectType, payload, options) {
-  return useSWRInfinite((_pageIndex, previousPageData) => {
-    if (previousPageData && !previousPageData.hasNextPage) {
-      return null;
-    }
+  return useSWRInfinite(
+    (_pageIndex, previousPageData) => {
+      if (previousPageData && !previousPageData.hasNextPage) {
+        return null;
+      }
 
-    const offset = previousPageData
-      ? previousPageData.offset + previousPageData.limit
-      : 0;
+      const offset = previousPageData
+        ? previousPageData.offset + previousPageData.limit
+        : 0;
 
-    return [
-      objectType,
-      { ...payload, options: { ...payload.options, offset } },
-    ];
-  }, queryFetcher, options);
+      return [
+        objectType,
+        { ...payload, options: { ...payload.options, offset } },
+      ];
+    },
+    queryFetcher,
+    options
+  );
 }
