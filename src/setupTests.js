@@ -3,6 +3,10 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
-import fetchMock from "jest-fetch-mock";
+import createFetchMock from "vitest-fetch-mock";
+import { vi } from "vitest";
 
-fetchMock.enableMocks();
+const fetchMocker = createFetchMock(vi);
+
+// sets globalThis.fetch and globalThis.fetchMock to our mocked version
+fetchMocker.enableMocks();
