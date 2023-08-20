@@ -1,6 +1,7 @@
 import { Flex, Box, Text, Stack, Link } from "@chakra-ui/react";
+import { PropsWithChildren } from "react";
 import { ArrowRight } from "react-feather";
-import { Link as BrowserLink } from "react-router-dom";
+import { Link as BrowserLink, LinkProps } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -11,7 +12,11 @@ export default function Home() {
   );
 }
 
-function PageLink({ url, children, ...rest }) {
+function PageLink({
+  url,
+  children,
+  ...rest
+}: PropsWithChildren<{ url: string } & Omit<LinkProps, "to">>) {
   return (
     <Link as={BrowserLink} to={url} {...rest}>
       <Flex

@@ -7,7 +7,11 @@ import {
 import { Link } from "react-router-dom";
 import { ChevronsRight } from "react-feather";
 
-export default function Breadcrumbs({ items }) {
+export default function Breadcrumbs({
+  items,
+}: {
+  items: Array<{ label: string; to?: string }>;
+}) {
   return (
     <Breadcrumb
       m="6"
@@ -19,8 +23,8 @@ export default function Breadcrumbs({ items }) {
         return (
           <BreadcrumbItem isCurrentPage={isCurrentPage} key={item.label}>
             <BreadcrumbLink
-              as={!isCurrentPage ? Link : undefined}
-              to={!isCurrentPage ? item.to : undefined}
+              as={isCurrentPage ? undefined : Link}
+              to={item.to ?? "#"}
             >
               {item.label}
             </BreadcrumbLink>

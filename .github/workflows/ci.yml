@@ -1,0 +1,83 @@
+name: CI
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+
+concurrency:
+  group:
+    ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  typecheck:
+    name: TypeScript
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: 🔎 Type check
+        run: yarn run typecheck
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: Run tests
+        run: yarn run test
+
+  deploy:
+    name: Deploy
+    needs: [tests, typecheck]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: Publish
+        uses: netlify/actions/build@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Inlined here only because of limited access during challenge
+          # In the real world this would happen using a secret
+          NETLIFY_SITE_ID: 20577425-3319-4973-82ee-dbdc993c2b85
+          NETLIFY_CMD: npm build
+          NETLIFY_DIR: dist

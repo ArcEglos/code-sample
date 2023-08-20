@@ -1,17 +1,27 @@
-import { queryFetcher } from "./use-space-x";
+import { API_ENTITY, queryFetcher } from "./use-space-x";
 
 beforeEach(() => {
-  fetch.resetMocks();
+  fetchMock.resetMocks();
 });
 
 test("Query fetcher handles requests to SpaceX V4 Query API", async () => {
-  fetch.mockResponseOnce(JSON.stringify({ docs: [] }));
+  fetchMock.mockResponseOnce(
+    JSON.stringify({ docs: [], offset: 0, hasNextPage: false, limit: 10 })
+  );
 
-  const response = await queryFetcher("launches", {
-    query: {},
-    options: { limit: 10 },
+  const response = await queryFetcher([
+    API_ENTITY.LAUNCHES,
+    {
+      query: {},
+      options: { limit: 10 },
+    },
+  ]);
+  expect(response).toEqual({
+    docs: [],
+    offset: 0,
+    hasNextPage: false,
+    limit: 10,
   });
-  expect(response).toEqual({ docs: [] });
   expect(fetch).toHaveBeenCalledTimes(1);
   expect(fetch).toHaveBeenCalledWith(
     "https://api.spacexdata.com/v4/launches/query",
@@ -27,12 +37,15 @@ test("Query fetcher handles requests to SpaceX V4 Query API", async () => {
 });
 
 test("Query fetcher handles failing requests to SpaceX V4 Query API", async () => {
-  fetch.mockReject(() => Promise.reject("API is down"));
+  fetchMock.mockReject(() => Promise.reject("API is down"));
 
-  const response = await queryFetcher("launchpads", {
-    query: { _id: "2341235" },
-    options: {},
-  }).catch((e) => null);
+  const response = await queryFetcher([
+    API_ENTITY.LAUNCH_PADS,
+    {
+      query: { _id: "2341235" },
+      options: {},
+    },
+  ]).catch((e) => null);
 
   expect(response).toBe(null);
   expect(fetch).toHaveBeenCalledTimes(1);

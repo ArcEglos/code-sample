@@ -4,14 +4,19 @@ import { Link } from "react-router-dom";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
 import LoadMoreButton from "./load-more-button";
-import { useSpaceXPaginatedQuery } from "../utils/use-space-x";
+import {
+  API_ENTITY,
+  LaunchPadDetails,
+  useSpaceXPaginatedQuery,
+} from "../utils/use-space-x";
 import { ToggleFavouriteButton } from "./favourites";
+import { FavouriteType } from "../utils/useFavourites";
 
 const PAGE_SIZE = 12;
 
 export default function LaunchPads() {
   const { data, error, isValidating, setSize } = useSpaceXPaginatedQuery(
-    "launchpads",
+    API_ENTITY.LAUNCH_PADS,
     {
       query: { upcoming: false },
       options: {
@@ -39,14 +44,13 @@ export default function LaunchPads() {
       <LoadMoreButton
         loadMore={() => setSize((size) => size + 1)}
         data={data}
-        pageSize={PAGE_SIZE}
         isLoadingMore={isValidating}
       />
     </div>
   );
 }
 
-export function LaunchPadItem({ launchPad }) {
+export function LaunchPadItem({ launchPad }: { launchPad: LaunchPadDetails }) {
   return (
     <Box
       as={Link}
@@ -58,7 +62,7 @@ export function LaunchPadItem({ launchPad }) {
       position="relative"
     >
       <Flex>
-        <Box p="6" minWidth="0" flexGrow="1">
+        <Box p="6" minWidth="0" flexGrow={1}>
           <Box d="flex" alignItems="baseline">
             {launchPad.status === "active" ? (
               <Badge px="2" variant="solid" colorScheme="green">
@@ -96,7 +100,10 @@ export function LaunchPadItem({ launchPad }) {
           </Text>
         </Box>
         <Box p="4" pl="0" pt="5">
-          <ToggleFavouriteButton id={launchPad.id} type="launchPad" />
+          <ToggleFavouriteButton
+            id={launchPad.id}
+            type={FavouriteType.LAUNCH_PAD}
+          />
         </Box>
       </Flex>
     </Box>
