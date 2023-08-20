@@ -25,6 +25,7 @@ import { useSpaceXQuery } from "../utils/use-space-x";
 import { formatDateTime } from "../utils/format-date";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
+import { ToggleFavouriteButton } from "./favourites";
 
 const numberFormatter = new Intl.NumberFormat();
 
@@ -102,6 +103,7 @@ function Header({ launch }) {
         {launch.name}
       </Heading>
       <Stack isInline spacing="3">
+        <ToggleFavouriteButton id={launch.id} type="launch" />
         <Badge colorScheme="purple" fontSize={["xs", "md"]}>
           #{launch.flight_number}
         </Badge>
@@ -130,9 +132,9 @@ function TimeAndLocation({ launch }) {
           </Box>
         </StatLabel>
         <Tooltip label={formatDateTime(launch.date_local)}>
-        <StatNumber fontSize={["md", "xl"]}>
-          {formatDateTime(launch.date_local, launch.launchpad.timezone)}
-        </StatNumber>
+          <StatNumber fontSize={["md", "xl"]}>
+            {formatDateTime(launch.date_local, launch.launchpad.timezone)}
+          </StatNumber>
         </Tooltip>
         <StatHelpText>{timeAgo(launch.date_utc)}</StatHelpText>
       </Stat>
