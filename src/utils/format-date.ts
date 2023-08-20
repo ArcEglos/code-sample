@@ -4,7 +4,10 @@
  * @param {string} [timeZone] {@link https://www.iana.org/time-zones IANA} name of timezone used for displaying. Machine default timezone is used when not set.
  * @returns {string} the formatted date string
  */
-export function formatDate(timestamp, timeZone) {
+export function formatDate(
+  timestamp: string | number | Date,
+  timeZone?: string
+) {
   return new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     year: "numeric",
@@ -20,7 +23,10 @@ export function formatDate(timestamp, timeZone) {
  * @param {string} [timeZone] {@link https://www.iana.org/time-zones IANA} name of timezone used for displaying. Machine default timezone is used when not set.
  * @returns {string} the formatted date string
  */
-export function formatDateTime(timestamp, timeZone) {
+export function formatDateTime(
+  timestamp: string | number | Date,
+  timeZone?: string
+) {
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",

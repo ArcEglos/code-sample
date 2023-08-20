@@ -16,23 +16,36 @@ import {
   AspectRatio,
 } from "@chakra-ui/react";
 
-import { useSpaceXQuery } from "../utils/use-space-x";
+import {
+  API_ENTITY,
+  LaunchDetails,
+  LaunchPadDetails,
+  useSpaceXQuery,
+} from "../utils/use-space-x";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
 import { LaunchItem } from "./launches";
 import { ToggleFavouriteButton } from "./favourites";
+import { FavouriteType } from "../utils/useFavourites";
 
 export default function LaunchPad() {
   let { launchPadId } = useParams();
-  const { data, error } = useSpaceXQuery("launchpads", {
+  const { data, error } = useSpaceXQuery(API_ENTITY.LAUNCH_PADS, {
     query: { _id: launchPadId },
     options: { populate: ["rockets"] },
   });
   const launchPad = data?.docs[0];
 
-  const { data: launches } = useSpaceXQuery("launches", {
-    query: { upcoming: false, launchpad: launchPadId },
-    options: { limit: 3, sort: { date_utc: "desc" } },
+  const { data: launches } = useSpaceXQuery(API_ENTITY.LAUNCHES, {
+    query: {
+      upcoming: false,
+      launchpad: launchPadId,
+    },
+    options: {
+      limit: 3,
+      sort: { date_utc: "desc" },
+      populate: ["rocket", "launchpad"],
+    },
   });
 
   if (error) return <Error />;
@@ -60,7 +73,7 @@ export default function LaunchPad() {
           {launchPad.details}
         </Text>
         <Map launchPad={launchPad} />
-        <RecentLaunches launches={launches?.docs} />
+        <RecentLaunches launches={launches?.docs ?? []} />
       </Box>
     </div>
   );
@@ -69,7 +82,7 @@ export default function LaunchPad() {
 const randomColor = (start = 200, end = 250) =>
   `hsl(${start + end * Math.random()}, 80%, 90%)`;
 
-function Header({ launchPad }) {
+function Header({ launchPad }: { launchPad: LaunchPadDetails }) {
   return (
     <Flex
       background={`linear-gradient(${randomColor()}, ${randomColor()})`}
@@ -94,7 +107,10 @@ function Header({ launchPad }) {
         {launchPad.full_name}
       </Heading>
       <Stack isInline spacing="3">
-        <ToggleFavouriteButton id={launchPad.id} type="launchPad" />
+        <ToggleFavouriteButton
+          id={launchPad.id}
+          type={FavouriteType.LAUNCH_PAD}
+        />
         <Badge colorScheme="purple" fontSize={["sm", "md"]}>
           {launchPad.launch_successes}/{launchPad.launch_attempts} successful
         </Badge>
@@ -112,7 +128,7 @@ function Header({ launchPad }) {
   );
 }
 
-function LocationAndVehicles({ launchPad }) {
+function LocationAndVehicles({ launchPad }: { launchPad: LaunchPadDetails }) {
   return (
     <SimpleGrid columns={[1, 1, 2]} borderWidth="1px" p="4" borderRadius="md">
       <Stat>
@@ -140,19 +156,18 @@ function LocationAndVehicles({ launchPad }) {
   );
 }
 
-function Map({ launchPad }) {
+function Map({ launchPad }: { launchPad: LaunchPadDetails }) {
   return (
     <AspectRatio ratio={16 / 5}>
       <Box
         as="iframe"
         src={`https://maps.google.com/maps?q=${launchPad.latitude}, ${launchPad.longitude}&z=15&output=embed`}
-        alt="demo"
       />
     </AspectRatio>
   );
 }
 
-function RecentLaunches({ launches }) {
+function RecentLaunches({ launches }: { launches: Array<LaunchDetails> }) {
   if (!launches?.length) {
     return null;
   }

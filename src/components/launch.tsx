@@ -21,17 +21,22 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 
-import { useSpaceXQuery } from "../utils/use-space-x";
+import {
+  API_ENTITY,
+  LaunchDetails,
+  useSpaceXQuery,
+} from "../utils/use-space-x";
 import { formatDateTime } from "../utils/format-date";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
 import { ToggleFavouriteButton } from "./favourites";
+import { FavouriteType } from "../utils/useFavourites";
 
 const numberFormatter = new Intl.NumberFormat();
 
 export default function Launch() {
   let { launchId } = useParams();
-  const { data, error } = useSpaceXQuery("launches", {
+  const { data, error } = useSpaceXQuery(API_ENTITY.LAUNCHES, {
     query: { _id: launchId },
     options: { populate: ["rocket", "launchpad"] },
   });
@@ -69,7 +74,7 @@ export default function Launch() {
   );
 }
 
-function Header({ launch }) {
+function Header({ launch }: { launch: LaunchDetails }) {
   return (
     <Flex
       bgImage={`url(${launch.links.flickr.original[0]})`}
@@ -103,7 +108,7 @@ function Header({ launch }) {
         {launch.name}
       </Heading>
       <Stack isInline spacing="3">
-        <ToggleFavouriteButton id={launch.id} type="launch" />
+        <ToggleFavouriteButton id={launch.id} type={FavouriteType.LAUNCH} />
         <Badge colorScheme="purple" fontSize={["xs", "md"]}>
           #{launch.flight_number}
         </Badge>
@@ -121,7 +126,7 @@ function Header({ launch }) {
   );
 }
 
-function TimeAndLocation({ launch }) {
+function TimeAndLocation({ launch }: { launch: LaunchDetails }) {
   return (
     <SimpleGrid columns={[1, 1, 2]} borderWidth="1px" p="4" borderRadius="md">
       <Stat>
@@ -156,7 +161,7 @@ function TimeAndLocation({ launch }) {
   );
 }
 
-function RocketInfo({ launch }) {
+function RocketInfo({ launch }: { launch: LaunchDetails }) {
   return (
     <SimpleGrid
       columns={[1, 1, 2]}
@@ -211,7 +216,7 @@ function RocketInfo({ launch }) {
   );
 }
 
-function Video({ launch }) {
+function Video({ launch }: { launch: LaunchDetails }) {
   return (
     <AspectRatio maxH="400px" ratio={1.7}>
       <Box
@@ -224,7 +229,7 @@ function Video({ launch }) {
   );
 }
 
-function Gallery({ images }) {
+function Gallery({ images }: { images: string[] }) {
   return (
     <SimpleGrid my="6" minChildWidth="350px" spacing="4">
       {images.map((src) => (

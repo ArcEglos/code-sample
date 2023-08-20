@@ -10,8 +10,9 @@ import { LaunchItem } from "./launches";
 import { LaunchPadItem } from "./launch-pads";
 import { Favourites } from "./favourites";
 import { BrowserRouter } from "react-router-dom";
+import { LaunchDetails, LaunchPadDetails } from "../utils/use-space-x";
 
-const launchFixture = {
+const launchFixture: LaunchDetails = {
   links: {
     patch: {
       small: "https://images2.imgbox.com/a9/9a/NXVkTZCE_o.png",
@@ -20,10 +21,24 @@ const launchFixture = {
   },
   rocket: {
     name: "Falcon 9",
+    success_rate_pct: 95,
+    mass: {
+      kg: 100,
+      lb: 200,
+    },
+    height: {
+      meters: 60,
+      feet: 180,
+    },
   },
+  flight_number: 180,
+  details: "Put a bunch of satellites into space",
   success: true,
   launchpad: {
     name: "KSC LC 39A",
+    id: "12345",
+    timezone: "America/New York",
+    full_name: "Historic Launch Pad 39a",
   },
   name: "Starlink 4-2 (v1.5) & Blue Walker 3",
   date_utc: "2022-09-11T01:10:00.000Z",
@@ -31,7 +46,7 @@ const launchFixture = {
   id: "62a9f89a20413d2695d8871a",
 };
 
-const launchPadFixture = {
+const launchPadFixture: LaunchPadDetails = {
   name: "CCSFS SLC 40",
   full_name: "Cape Canaveral Space Force Station Space Launch Complex 40",
   rockets: [
@@ -43,21 +58,32 @@ const launchPadFixture = {
   id: "5e9e4501f509094ba4566f84",
   launch_attempts: 55,
   launch_successes: 55,
+  details: "Quite an important launch pad",
+  locality: "Cape Canaveral",
+  region: "USA",
+  latitude: 30.56,
+  longitude: -60.153,
 };
 
 beforeEach(() => {
-  fetch.resetMocks();
+  fetchMock.resetMocks();
 });
 
 test("Allows toggling favourite status on launches", async () => {
-  fetch.mockResponse(async (req) => {
+  fetchMock.mockResponse(async (req) => {
     if (req.url.endsWith("/launches/query")) {
       return JSON.stringify({
         docs: [launchFixture],
+        offset: 0,
+        hasNextPage: false,
+        limit: 10,
       });
     } else if (req.url.endsWith("/launchpads/query")) {
       return JSON.stringify({
         docs: [launchPadFixture],
+        offset: 0,
+        hasNextPage: false,
+        limit: 10,
       });
     } else {
       return {

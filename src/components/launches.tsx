@@ -2,18 +2,23 @@ import { Badge, Box, Image, SimpleGrid, Text, Flex } from "@chakra-ui/react";
 import { format as timeAgo } from "timeago.js";
 import { Link } from "react-router-dom";
 
-import { useSpaceXPaginatedQuery } from "../utils/use-space-x";
+import {
+  API_ENTITY,
+  LaunchDetails,
+  useSpaceXPaginatedQuery,
+} from "../utils/use-space-x";
 import { formatDate } from "../utils/format-date";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
 import LoadMoreButton from "./load-more-button";
 import { ToggleFavouriteButton } from "./favourites";
+import { FavouriteType } from "../utils/useFavourites";
 
 const PAGE_SIZE = 12;
 
 export default function Launches() {
   const { data, error, isValidating, setSize } = useSpaceXPaginatedQuery(
-    "launches",
+    API_ENTITY.LAUNCHES,
     {
       query: { upcoming: false },
       options: {
@@ -41,14 +46,13 @@ export default function Launches() {
       <LoadMoreButton
         loadMore={() => setSize((size) => size + 1)}
         data={data}
-        pageSize={PAGE_SIZE}
         isLoadingMore={isValidating}
       />
     </div>
   );
 }
 
-export function LaunchItem({ launch }) {
+export function LaunchItem({ launch }: { launch: LaunchDetails }) {
   return (
     <Box
       as={Link}
@@ -78,7 +82,7 @@ export function LaunchItem({ launch }) {
         objectPosition="bottom"
       />
       <Flex>
-        <Box p="6" minWidth="0" flexGrow="1">
+        <Box p="6" minWidth="0" flexGrow={1}>
           <Box d="flex" alignItems="baseline">
             {launch.success ? (
               <Badge px="2" variant="solid" colorScheme="green">
@@ -118,7 +122,7 @@ export function LaunchItem({ launch }) {
           </Flex>
         </Box>
         <Box p="4" pl="0" pt="5">
-          <ToggleFavouriteButton id={launch.id} type="launch" />
+          <ToggleFavouriteButton id={launch.id} type={FavouriteType.LAUNCH} />
         </Box>
       </Flex>
     </Box>

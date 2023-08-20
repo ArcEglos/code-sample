@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { PropsWithChildren, useRef } from "react";
 import {
   Stack,
   Flex,
@@ -19,14 +19,18 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import { Star } from "react-feather";
-import { useFavourites } from "../utils/useFavourites";
-import { useSpaceXPaginatedQuery } from "../utils/use-space-x";
+import {
+  Favourite,
+  FavouriteType,
+  useFavourites,
+} from "../utils/useFavourites";
+import { API_ENTITY, useSpaceXPaginatedQuery } from "../utils/use-space-x";
 import Error from "./error";
 import { Link } from "react-router-dom";
 
 export function Favourites() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = useRef();
+  const btnRef = useRef<HTMLButtonElement>(null);
   const [favourites] = useFavourites();
 
   return (
@@ -55,12 +59,16 @@ export function Favourites() {
               <Accordion defaultIndex={[0, 1]} allowMultiple>
                 <FavouriteLaunches
                   launches={favourites
-                    .filter((candidate) => candidate.type === "launch")
+                    .filter(
+                      (candidate) => candidate.type === FavouriteType.LAUNCH
+                    )
                     .map((launch) => launch.id)}
                 />
                 <FavouriteLaunchPads
                   launchPads={favourites
-                    .filter((candidate) => candidate.type === "launchPad")
+                    .filter(
+                      (candidate) => candidate.type === FavouriteType.LAUNCH_PAD
+                    )
                     .map((launchPad) => launchPad.id)}
                 />
               </Accordion>
@@ -72,9 +80,9 @@ export function Favourites() {
   );
 }
 
-const FavouriteLaunches = ({ launches }) => {
+const FavouriteLaunches = ({ launches }: { launches: string[] }) => {
   const { data, error } = useSpaceXPaginatedQuery(
-    "launches",
+    API_ENTITY.LAUNCHES,
     {
       query: { _id: { $in: launches } },
       options: {
@@ -111,7 +119,10 @@ const FavouriteLaunches = ({ launches }) => {
               >
                 <Flex justifyContent="space-between" alignItems="flex-end">
                   <Box isTruncated>{launch.name}</Box>
-                  <ToggleFavouriteButton id={launch.id} type="launch" />
+                  <ToggleFavouriteButton
+                    id={launch.id}
+                    type={FavouriteType.LAUNCH}
+                  />
                 </Flex>
                 <Box
                   color="gray.500"
@@ -130,9 +141,9 @@ const FavouriteLaunches = ({ launches }) => {
   );
 };
 
-const FavouriteLaunchPads = ({ launchPads }) => {
+const FavouriteLaunchPads = ({ launchPads }: { launchPads: string[] }) => {
   const { data, error } = useSpaceXPaginatedQuery(
-    "launchpads",
+    API_ENTITY.LAUNCH_PADS,
     {
       query: { _id: { $in: launchPads } },
       options: {
@@ -168,7 +179,10 @@ const FavouriteLaunchPads = ({ launchPads }) => {
             >
               <Flex justifyContent="space-between" alignItems="flex-end">
                 <Box isTruncated>{launchPad.full_name}</Box>
-                <ToggleFavouriteButton id={launchPad.id} type="launchPad" />
+                <ToggleFavouriteButton
+                  id={launchPad.id}
+                  type={FavouriteType.LAUNCH_PAD}
+                />
               </Flex>
               <Box
                 color="gray.500"
@@ -186,7 +200,11 @@ const FavouriteLaunchPads = ({ launchPads }) => {
   );
 };
 
-const FavouriteSegment = ({ title, count, children }) => {
+const FavouriteSegment = ({
+  title,
+  count,
+  children,
+}: PropsWithChildren<{ title: string; count: number }>) => {
   return (
     <AccordionItem>
       <h2>
@@ -204,7 +222,7 @@ const FavouriteSegment = ({ title, count, children }) => {
   );
 };
 
-export function ToggleFavouriteButton({ type, id, url }) {
+export function ToggleFavouriteButton({ type, id }: Favourite) {
   const [favourites, { addFavourite, removeFavourite }] = useFavourites();
 
   const isFavourite = favourites.some(
@@ -227,7 +245,7 @@ export function ToggleFavouriteButton({ type, id, url }) {
         if (isFavourite) {
           removeFavourite({ type, id });
         } else {
-          addFavourite({ type, id, url });
+          addFavourite({ type, id });
         }
       }}
     />
