@@ -1,6 +1,6 @@
-# The Pleo Frontend Challenge
+# The Frontend Challenge
 
-Here at Pleo we love space. For example, we name all our microservices after
+Here we love space. For example, we name all our microservices after
 moons of the solar system. But before you get to the moons, you have to go
 through rockets. Welcome to our frontend challenge!
 
