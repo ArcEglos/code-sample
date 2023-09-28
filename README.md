@@ -1,3 +1,35 @@
+# Code sample context
+
+## Origin
+
+This is a copy of a code challenge that I did in the context of a technical interview cycle.
+The challenge already included a pre-built setup to extend. You can read the content of the
+setup and challenge below the tripple line and in [CHALLENGE.md](./CHALLENGE.md). The initial
+commit is code that was not written by me.
+
+## Change descriptions
+
+In the code challenge I did the three tasks in individual branches that were then merged
+using PRs. This structure could not be copied over here. Instead, I added three markdown
+files that include the descriptions of the PRs that I initially wrote for the challenge:
+
+1. [Task 1](./docs/task-1.md)
+2. [Task 2](./docs/task-2.md)
+3. [Task 3](./docs/task-3.md)
+
+Also, each PR consisted of multiple commits that were squashed on merge. You can see the
+changes in each PR in the commit on the main branch with the respective task number in the
+commit message.
+
+## Timeframe
+
+This code challenge was done over the course of a Saturday and Sunday, working on it
+intermittently.
+
+---
+---
+---
+
 # ¡Space·Rockets! app
 
 ### [👉 Go to the challenge 👈](./CHALLENGE.md)
